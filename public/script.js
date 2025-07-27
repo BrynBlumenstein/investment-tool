@@ -1,33 +1,41 @@
 document.addEventListener('DOMContentLoaded', async () => {
 	const symbols = [
-		'bil',
-		'fisvx',
-		'fpadx',
-		'fskax',
-		'fsrnx',
-		'ftihx',
-		'fuamx',
-		'iau',
-		'iaum',
-		'vbil' /* ,
-		'fakesymbol' */
+		'BIL',
+		'FISVX',
+		'FPADX',
+		'FSKAX',
+		'FSRNX',
+		'FTIHX',
+		'FUAMX',
+		'IAU',
+		'IAUM',
+		'VBIL' /* ,
+		'FAKESYMBOL' // used to test error handling */
 	];
 
 	const pricesTableBody = document.getElementById('prices-table-body');
 
+	// loop through each symbol and fetch its quote
 	symbols.forEach(async (symbol) => {
-		const res = await fetch(`api/quote?symbol=${symbol}`);
-		const data = await res.json();
+		try {
+			const res = await fetch(`api/quote?symbol=${symbol}`);
+			const data = await res.json();
 
-		const row = document.createElement('tr');
+			const row = document.createElement('tr');
 
-		if (data.error) {
-			console.log(data.error);
-			row.innerHTML = `<td>${symbol.toUpperCase()}</td><td>Error</td>`;
-		} else {
-			row.innerHTML = `<td>${data.symbol}</td><td>$${data.price}</td>`;
+			if (data.error) {
+				// handle errors returned from the API
+				console.error(`Error fetching ${symbol}: ${data.error}`);
+				row.innerHTML = `<td>${symbol}</td><td>Error</td>`;
+			} else {
+				// successful quote
+				row.innerHTML = `<td>${data.symbol}</td><td>$${data.price}</td>`;
+			}
+
+			pricesTableBody.appendChild(row);
+		} catch (error) {
+			// handle network or unexpected failures
+			console.error(`Fetch failed for ${symbol}: ${error.message}`);
 		}
-
-		pricesTableBody.appendChild(row);
 	});
 });
