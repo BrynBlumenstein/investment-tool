@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 		'FAKESYMBOL' // used to test error handling */
 	];
 
-	const pricesTableBody = document.getElementById('prices-table-body');
+	const priceTableBody = document.getElementById('price-table-body');
 
 	// loop through each symbol and fetch its quote
 	symbols.forEach(async (symbol) => {
@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 				row.innerHTML = `<td>${data.symbol}</td><td>$${data.price}</td>`;
 			}
 
-			pricesTableBody.appendChild(row);
+			priceTableBody.appendChild(row);
 		} catch (error) {
 			// handle network or unexpected failures
 			console.error(`Fetch failed for ${symbol}: ${error.message}`);
