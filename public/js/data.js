@@ -66,14 +66,16 @@ export function getRothContribution() {
 }
 
 export function updateIncomeAndContribution(value) {
-	grossIncome = Number.isFinite(value) ? value : 0;
-	rothContribution = grossIncome * (ROTH_CONTRIBUTION_PERCENT / 100);
+	grossIncome = Number.isFinite(value) ? parseFloat(value.toFixed(2)) : 0;
+	rothContribution = parseFloat(
+		(grossIncome * (ROTH_CONTRIBUTION_PERCENT / 100)).toFixed(2)
+	);
 }
 
 export function getAllocationSnapshot(prices) {
 	const targets = calculateTargets();
 	const shareCounts = calculateShareCounts(targets, prices);
-	const actuals = calculateActuals(prices);
+	const actuals = calculateActuals(shareCounts, prices);
 	const deltas = calculateDeltas(targets, actuals);
 
 	return allocationConfig.map((item, i) => ({
@@ -106,8 +108,8 @@ export async function fetchPrices() {
 }
 
 function calculateTargets() {
-	return allocationConfig.map(
-		({ percent }) => (percent / 100) * rothContribution
+	return allocationConfig.map(({ percent }) =>
+		parseFloat(((percent / 100) * rothContribution).toFixed(2))
 	);
 }
 
@@ -119,20 +121,20 @@ function calculateShareCounts(targets, prices) {
 			return null;
 		}
 
-		return targets[i] / price;
+		return parseFloat((targets[i] / price).toFixed(3));
 	});
 }
 
-function calculateActuals(prices) {
-	return allocationConfig.map((item) => {
+function calculateActuals(shareCounts, prices) {
+	return allocationConfig.map((item, i) => {
 		const price = prices.get(item.ticker);
+		const shares = shareCounts[i];
 
 		if (price === null) {
 			return null;
 		}
 
-		// TODO (Optional): Replace with actual calculation logic
-		return 0;
+		return parseFloat((shares * price).toFixed(2));
 	});
 }
 
@@ -144,6 +146,6 @@ function calculateDeltas(targets, actuals) {
 			return null;
 		}
 
-		return target - actual;
+		return parseFloat((target - actual).toFixed(2));
 	});
 }

@@ -20,7 +20,7 @@ export async function initializePage() {
 	createAllocationTable(data);
 	initializeEventListeners(prices);
 	incomeInput.disabled = false;
-    exportButton.disabled = false;
+	exportButton.disabled = false;
 }
 
 function createPriceTable(prices) {
@@ -31,7 +31,7 @@ function createPriceTable(prices) {
 		row.innerHTML = `
             <td>${ticker}</td>
             <td id="${ticker.toLowerCase()}-price">${
-			price === null ? 'Error' : `$${price.toFixed(2)}`
+			price === null ? 'Error' : `$${price}`
 		}</td>
         `;
 		priceTableBody.appendChild(row);
@@ -125,19 +125,21 @@ function addSummarySheet(wb) {
 function addPricesSheet(wb, prices) {
 	const pricesData = [['Ticker', 'Price']];
 	for (const [ticker, price] of prices.entries()) {
-		pricesData.push([ticker, price === null ? 'Error' : price.toFixed(2)]);
+		pricesData.push([ticker, price === null ? 'Error' : price]);
 	}
 	const pricesSheet = XLSX.utils.aoa_to_sheet(pricesData);
 	XLSX.utils.book_append_sheet(wb, pricesSheet, 'Prices');
 }
 
 function addAllocationSheet(wb, prices) {
-	const allocationData = [['Asset', 'Target', 'Shares']];
+	const allocationData = [['Asset', 'Target', 'Shares', 'Actual', 'Delta']];
 	for (const row of getAllocationSnapshot(prices)) {
 		const label = `${row.percent}% ${row.label} (${row.ticker})`;
 		const target = row.target.toFixed(2);
 		const shares = row.shares === null ? 'Error' : row.shares.toFixed(3);
-		allocationData.push([label, target, shares]);
+		const actual = row.actual === null ? 'Error' : row.actual.toFixed(2);
+		const delta = row.delta === null ? 'Error' : row.delta.toFixed(2);
+		allocationData.push([label, target, shares, actual, delta]);
 	}
 	const allocationSheet = XLSX.utils.aoa_to_sheet(allocationData);
 	XLSX.utils.book_append_sheet(wb, allocationSheet, 'Allocation');
