@@ -1,4 +1,5 @@
 import {
+	getGrossIncome,
 	getRothContribution,
 	updateIncomeAndContribution,
 	getAllocationSnapshot,
@@ -9,6 +10,7 @@ const incomeInput = document.getElementById('gross-income');
 const contributionOutput = document.getElementById('roth-contribution');
 const priceTableBody = document.getElementById('price-table-body');
 const allocationTableBody = document.getElementById('allocation-table-body');
+const exportButton = document.getElementById('export-button');
 
 export async function initializePage() {
 	const prices = await fetchPrices();
@@ -18,6 +20,7 @@ export async function initializePage() {
 	createAllocationTable(data);
 	initializeEventListeners(prices);
 	incomeInput.disabled = false;
+    exportButton.disabled = false;
 }
 
 function createPriceTable(prices) {
@@ -84,12 +87,58 @@ function updateAllocationTable(data) {
 }
 
 function initializeEventListeners(prices) {
-	incomeInput.addEventListener('input', async (event) => {
-		updateIncomeAndContribution(parseFloat(event.target.value));
-		const contribution = getRothContribution();
-		contributionOutput.textContent = `$${contribution.toFixed(2)}`;
+	incomeInput.addEventListener('input', (event) =>
+		handleIncomeInput(event, prices)
+	);
+	exportButton.addEventListener('click', () => handleExportClick(prices));
+}
 
-		const data = getAllocationSnapshot(prices);
-		updateAllocationTable(data);
-	});
+async function handleIncomeInput(event, prices) {
+	updateIncomeAndContribution(parseFloat(event.target.value));
+	const contribution = getRothContribution();
+	contributionOutput.textContent = `$${contribution.toFixed(2)}`;
+
+	const data = getAllocationSnapshot(prices);
+	updateAllocationTable(data);
+}
+
+function handleExportClick(prices) {
+	const wb = XLSX.utils.book_new();
+	const filename = `allocation-${
+		new Date().toISOString().split('T')[0]
+	}.xlsx`;
+
+	addSummarySheet(wb);
+	addPricesSheet(wb, prices);
+	addAllocationSheet(wb, prices);
+	XLSX.writeFile(wb, filename);
+}
+
+function addSummarySheet(wb) {
+	const infoSheet = XLSX.utils.aoa_to_sheet([
+		['Gross Income', getGrossIncome().toFixed(2)],
+		['Roth Contribution', getRothContribution().toFixed(2)]
+	]);
+	XLSX.utils.book_append_sheet(wb, infoSheet, 'Summary');
+}
+
+function addPricesSheet(wb, prices) {
+	const pricesData = [['Ticker', 'Price']];
+	for (const [ticker, price] of prices.entries()) {
+		pricesData.push([ticker, price === null ? 'Error' : price.toFixed(2)]);
+	}
+	const pricesSheet = XLSX.utils.aoa_to_sheet(pricesData);
+	XLSX.utils.book_append_sheet(wb, pricesSheet, 'Prices');
+}
+
+function addAllocationSheet(wb, prices) {
+	const allocationData = [['Asset', 'Target', 'Shares']];
+	for (const row of getAllocationSnapshot(prices)) {
+		const label = `${row.percent}% ${row.label} (${row.ticker})`;
+		const target = row.target.toFixed(2);
+		const shares = row.shares === null ? 'Error' : row.shares.toFixed(3);
+		allocationData.push([label, target, shares]);
+	}
+	const allocationSheet = XLSX.utils.aoa_to_sheet(allocationData);
+	XLSX.utils.book_append_sheet(wb, allocationSheet, 'Allocation');
 }

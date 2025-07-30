@@ -57,6 +57,10 @@ const tickers = allocationConfig.map((item) => item.ticker);
 let grossIncome = 0;
 let rothContribution = 0;
 
+export function getGrossIncome() {
+	return grossIncome;
+}
+
 export function getRothContribution() {
 	return rothContribution;
 }
