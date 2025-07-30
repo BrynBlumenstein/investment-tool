@@ -14,20 +14,58 @@
 	<body>
 		<header><h1>Investment Tool</h1></header>
 		<main>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Symbol</th>
-                        <th>Price</th>
-                    </tr>
-                </thead>
-                <tbody id="price-table-body">
+			<section id="prices-section">
+				<table id="price-table">
+					<caption>
+						Live Price Data
+					</caption>
+					<thead>
+						<tr>
+							<th>Ticker</th>
+							<th>Price</th>
+						</tr>
+					</thead>
+					<tbody id="price-table-body"></tbody>
+				</table>
+			</section>
 
-                </tbody>
-            </table>
-        </main>
+			<section id="income-section">
+				<h2>Contribution Calculator</h2>
+				<label for="gross-income">Gross Income: $</label>
+				<input
+					type="number"
+					id="gross-income"
+					name="gross-income"
+					min="0"
+					step="any"
+					disabled
+				/>
+				<p>
+					Roth Contribution (15%):
+					<strong id="roth-contribution">$0.00</strong>
+				</p>
+			</section>
+
+			<section id="allocation-section">
+				<table id="pinwheel-allocation">
+					<caption>
+						Pinwheel Allocation
+					</caption>
+					<thead>
+						<tr>
+							<th>Asset</th>
+							<th>Target</th>
+							<th>Shares</th>
+							<th>Actual</th>
+							<th>Delta</th>
+						</tr>
+					</thead>
+					<tbody id="allocation-table-body"></tbody>
+				</table>
+			</section>
+		</main>
 		<footer><p>&copy;&nbsp;2025 Bryn Blumenstein</p></footer>
 	</body>
 
-	<script src="./script.js"></script>
+	<script type="module" src="./js/main.js"></script>
 </html>

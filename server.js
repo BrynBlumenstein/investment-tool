@@ -10,47 +10,47 @@ const PORT = process.env.PORT || 3000;
 // serve static files from the "public" directory (HTML, CSS, JS)
 app.use(express.static('public'));
 
-// in-memory cache object: { [symbol]: { timestamp, data } }
+// in-memory cache object: { [ticker]: { timestamp, data } }
 const cache = {};
 const CACHE_DURATION_MS = 5 * 60 * 1000; // Cache data for 5 minutes
 
-// API route to fetch a stock/ETF quote by symbol
+// API route to fetch a security quote by ticker
 app.get('/api/quote', async (req, res) => {
-	const symbol = req.query.symbol;
-	if (!symbol) {
-		// if no symbol is provided, return a 400 Bad Request
-		return res.status(400).json({ error: 'No symbol provided' });
+	const ticker = req.query.ticker;
+	if (!ticker) {
+		// if no ticker is provided, return a 400 Bad Request
+		return res.status(400).json({ error: 'No ticker provided' });
 	}
 
-	const cached = cache[symbol];
+	const cached = cache[ticker];
 	const now = Date.now();
 
 	// if data is cached and still fresh, return it
 	if (cached && now - cached.timestamp < CACHE_DURATION_MS) {
-		console.log(`Cache hit for ${symbol}: $${cached.data.price}`);
+		console.log(`Cache hit for ${ticker}: $${cached.data.price}`);
 		return res.json(cached.data);
 	}
 
 	try {
 		// fetch fresh data from Yahoo Finance
-		const quote = await yahooFinance.quote(symbol);
+		const quote = await yahooFinance.quote(ticker);
 		const data = {
-			symbol: quote.symbol,
+			ticker: quote.ticker,
 			price: quote.regularMarketPrice
 		};
 
-		console.log(`Fetched quote for ${symbol}: $${data.price}`);
+		console.log(`Fetched quote for ${ticker}: $${data.price}`);
 
 		// store fetched data in cache
-		cache[symbol] = {
+		cache[ticker] = {
 			timestamp: now,
 			data
 		};
 
 		res.json(data);
 	} catch (error) {
-		// handle errors (e.g., network issues or invalid symbol)
-		res.status(500).json({ error: `Failed to fetch data for ${symbol}` });
+		// handle errors (e.g., network issues or invalid ticker)
+		res.status(500).json({ error: `Failed to fetch data for ${ticker}` });
 	}
 });
 
