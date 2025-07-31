@@ -1,6 +1,6 @@
 const CONTRIBUTION_PERCENT = 15;
 
-// Pinwheel portfolio asset allocation
+// "Pinwheel Portfolio" asset allocation
 const allocationConfig = Object.freeze([
 	{
 		group: 'Domestic',
