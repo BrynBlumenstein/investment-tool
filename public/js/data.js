@@ -1,4 +1,4 @@
-const ROTH_CONTRIBUTION_PERCENT = 15;
+const CONTRIBUTION_PERCENT = 15;
 
 // Pinwheel portfolio asset allocation
 const allocationConfig = Object.freeze([
@@ -55,20 +55,20 @@ const allocationConfig = Object.freeze([
 const tickers = allocationConfig.map((item) => item.ticker);
 
 let grossIncome = 0;
-let rothContribution = 0;
+let contribution = 0;
 
 export function getGrossIncome() {
 	return grossIncome;
 }
 
-export function getRothContribution() {
-	return rothContribution;
+export function getContribution() {
+	return contribution;
 }
 
 export function updateIncomeAndContribution(value) {
 	grossIncome = Number.isFinite(value) ? parseFloat(value.toFixed(2)) : 0;
-	rothContribution = parseFloat(
-		(grossIncome * (ROTH_CONTRIBUTION_PERCENT / 100)).toFixed(2)
+	contribution = parseFloat(
+		(grossIncome * (CONTRIBUTION_PERCENT / 100)).toFixed(2)
 	);
 }
 
@@ -109,7 +109,7 @@ export async function fetchPrices() {
 
 function calculateTargets() {
 	return allocationConfig.map(({ percent }) =>
-		parseFloat(((percent / 100) * rothContribution).toFixed(2))
+		parseFloat(((percent / 100) * contribution).toFixed(2))
 	);
 }
 

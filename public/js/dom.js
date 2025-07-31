@@ -1,14 +1,14 @@
 import {
 	getGrossIncome,
-	getRothContribution,
+	getContribution,
 	updateIncomeAndContribution,
 	getAllocationSnapshot,
 	fetchPrices
 } from './data.js';
 
 const incomeInput = document.getElementById('gross-income');
-const contributionOutput = document.getElementById('roth-contribution');
-const priceTableBody = document.getElementById('price-table-body');
+const contributionOutput = document.getElementById('contribution');
+const pricesTableBody = document.getElementById('prices-table-body');
 const allocationTableBody = document.getElementById('allocation-table-body');
 const exportButton = document.getElementById('export-button');
 
@@ -24,7 +24,7 @@ export async function initializePage() {
 }
 
 function createPriceTable(prices) {
-	priceTableBody.innerHTML = '';
+	pricesTableBody.innerHTML = '';
 
 	for (const [ticker, price] of prices.entries()) {
 		const row = document.createElement('tr');
@@ -34,7 +34,7 @@ function createPriceTable(prices) {
 			price === null ? 'Error' : `$${price}`
 		}</td>
         `;
-		priceTableBody.appendChild(row);
+		pricesTableBody.appendChild(row);
 	}
 }
 
@@ -95,7 +95,7 @@ function initializeEventListeners(prices) {
 
 async function handleIncomeInput(event, prices) {
 	updateIncomeAndContribution(parseFloat(event.target.value));
-	const contribution = getRothContribution();
+	const contribution = getContribution();
 	contributionOutput.textContent = `$${contribution.toFixed(2)}`;
 
 	const data = getAllocationSnapshot(prices);
@@ -117,7 +117,7 @@ function handleExportClick(prices) {
 function addSummarySheet(wb) {
 	const infoSheet = XLSX.utils.aoa_to_sheet([
 		['Gross Income', getGrossIncome().toFixed(2)],
-		['Roth Contribution', getRothContribution().toFixed(2)]
+		['Contribution', getContribution().toFixed(2)]
 	]);
 	XLSX.utils.book_append_sheet(wb, infoSheet, 'Summary');
 }

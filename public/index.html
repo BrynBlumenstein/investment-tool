@@ -6,7 +6,7 @@
 		<title>Investment Tool</title>
 		<meta
 			name="description"
-			content="A web based tool to automate calculations related to my investing"
+			content="A simple web-based tool to automate calculations related to my personal financial investing"
 		/>
 		<meta name="author" content="Bryn Blumenstein" />
 		<link rel="stylesheet" href="./style.css" />
@@ -15,7 +15,7 @@
 		<header><h1>Investment Tool</h1></header>
 		<main>
 			<section id="prices-section">
-				<table id="price-table">
+				<table id="prices-table">
 					<caption>
 						Live Price Data
 					</caption>
@@ -25,7 +25,7 @@
 							<th>Price</th>
 						</tr>
 					</thead>
-					<tbody id="price-table-body"></tbody>
+					<tbody id="prices-table-body"></tbody>
 				</table>
 			</section>
 
@@ -41,15 +41,15 @@
 					disabled
 				/>
 				<p>
-					Roth Contribution (15%):
-					<strong id="roth-contribution">$0.00</strong>
+					Contribution (15%):
+					<strong id="contribution">$0.00</strong>
 				</p>
 			</section>
 
 			<section id="allocation-section">
 				<table id="allocation-table">
 					<caption>
-						Pinwheel Allocation
+						"Pinwheel Portfolio" Asset Allocation
 					</caption>
 					<thead>
 						<tr>
@@ -62,7 +62,7 @@
 					</thead>
 					<tbody id="allocation-table-body"></tbody>
 				</table>
-				<button id="export-button" disabled>Export as XLSX</button>
+				<button id="export-button" disabled>Export to Excel</button>
 			</section>
 		</main>
 		<footer><p>&copy;&nbsp;2025 Bryn Blumenstein</p></footer>
